@@ -1,0 +1,7 @@
+This is an overview over some relevant commands in C 
+
+memset(pointer to the block of memory to fill, value to be set, number of bytes to fill)
+    - Sets all values in an array to one value (like 0)
+
+memcpy(*dest, *srz, n)
+    - copies n characters from memory src to dest the  
