@@ -52,7 +52,7 @@ int main (int nargs, char **args)
     u_new = tmp_ptr;
   }
   double end1 = clock();
-  printf("%f\n", 1000*(end1-start1)/CLOCKS_PER_SEC);
+  printf("%.f\n", 1000*(end1-start1)/CLOCKS_PER_SEC);
 
   printf("nx=%d, ny=%d, T=%g, dt=%g, error=%e\n",nx,ny,t,dt,
 	 compute_numerical_error(nx,ny,dx,dy,t,u)); 
@@ -81,7 +81,7 @@ int main (int nargs, char **args)
     u_new = tmp_ptr;
   }
   double end2 = clock();
-  printf("%f\n", 1000*(end2-start2)/CLOCKS_PER_SEC);
+  printf("%.f\n", 1000*(end2-start2)/CLOCKS_PER_SEC);
 
   printf("nx=%d, ny=%d, T=%g, dt=%g, error=%e\n",nx,ny,t,dt,
 	 compute_numerical_error(nx,ny,dx,dy,t,u));

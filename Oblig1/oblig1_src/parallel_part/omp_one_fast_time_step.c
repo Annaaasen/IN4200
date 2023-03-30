@@ -3,15 +3,15 @@
 void omp_one_fast_time_step (int nx, int ny, double dx, double dy, double dt,
 			     double **u_new, double **u, double **u_prev)
 {
-    int i_below, i_above, j_left, j_right; 
+    int i, j, i_below, i_above, j_left, j_right; 
 
     double fact_x = dt*dt / (8 * dx*dx);
     double fact_y = dt*dt / (8 * dy*dy);
 
     //Inner square 
     #pragma omp parallel for collapse(2)
-    for (int i=1; i<ny-1; i++){
-        for (int j=1; j<nx-1; j++){
+    for (i=1; i<ny-1; i++){
+        for (j=1; j<nx-1; j++){
             u_new[i][j] = 2*u[i][j]  
                     + fact_x * (u[i][j-1] - 2*u[i][j] + u[i][j+1]) 
                     + fact_y * (u[i-1][j] - 2*u[i][j] + u[i+1][j])
@@ -20,8 +20,8 @@ void omp_one_fast_time_step (int nx, int ny, double dx, double dy, double dt,
     }
 
     //Boundries (colums without corners)
-    #pragma omp parallel
-    for (int i=1; i<ny-1; i++){
+    #pragma omp parallel for
+    for (i=1; i<ny-1; i++){
         //left column
         u_new[i][0] = 2*u[i][0]  
                     + fact_x * (u[i][1] - 2*u[i][0] + u[i][1]) 
@@ -36,8 +36,8 @@ void omp_one_fast_time_step (int nx, int ny, double dx, double dy, double dt,
     }
 
     //Boundries (rows without corners)
-    #pragma omp parallel
-    for (int j=1; j<nx-1; j++){
+    #pragma omp parallel for
+    for (j=1; j<nx-1; j++){
         //bottom row
         u_new[0][j] = 2*u[0][j]
                     + fact_x * (u[0][j-1] - 2*u[0][j] + u[0][j+1])

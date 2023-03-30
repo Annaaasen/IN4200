@@ -11,7 +11,7 @@ compile:
 	para_main.c  
 
 run:
-	time ./para_main.o 
+	./para_main.o 
 
 clean: 
 	rm *o 

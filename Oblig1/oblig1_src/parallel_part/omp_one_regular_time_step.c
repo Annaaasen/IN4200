@@ -5,21 +5,21 @@ void omp_one_regular_time_step (int nx, int ny, double dx, double dy, double dt,
 {
   // Want to calculate the first time step for every point 
   
-  int j, j_left, j_right, i_above, i_below;
+  int i, j, j_left, j_right, i_above, i_below;
   
   double fact_x = dt*dt / (8 * dx*dx);
   double fact_y = dt*dt / (8 * dy*dy);
 
   //Inner square: 
   #pragma omp parallel for private(i_below, i_above, j, j_left, j_right)           
-  for (int i=0; i<ny; i++){    
+  for (i=0; i<ny; i++){    
     if (i==0)     i_below = 1;
     else          i_below = i-1;
 
     if (i==ny-1)  i_above = ny-2;
     else          i_above = i+1;
 
-    for (int j=0; j<nx; j++){
+    for (j=0; j<nx; j++){
 
       if (j==0)   j_left = 1;
       else        j_left = j-1;

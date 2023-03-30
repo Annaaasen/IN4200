@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+// #include <time.h>
 
 #include "../serial_part/functions.h"
 #include "para_functions.h"
@@ -39,7 +40,9 @@ int main (int nargs, char **args)
   // compute the first time step, that is, compute u using u_prev values
   omp_first_time_step (nx, ny, dx, dy, dt, u, u_prev);
 
-    // compute the remaining time steps
+  // compute the remaining time steps
+  double start1, stop1;
+  start1 = omp_get_wtime();
   t = dt;
   while (t<T) {
     t += dt;
@@ -51,9 +54,14 @@ int main (int nargs, char **args)
     u = u_new;
     u_new = tmp_ptr;
   }
+  stop1 = omp_get_wtime();
+  double time1 = (stop1 - start1);
+  printf("%e \n%e\n", stop1, start1);
 
-  printf("nx=%d, ny=%d, T=%g, dt=%g, error=%e\n",nx,ny,t,dt,
-	 omp_compute_numerical_error(nx,ny,dx,dy,t,u));
+  printf("Regular time step: \nnx=%d, ny=%d, T=%g, dt=%g, error=%e, calculation time=%ems\n",
+   nx,ny,t,dt,
+	 omp_compute_numerical_error(nx,ny,dx,dy,t,u),
+   time1);
 
   // ---- recompute the numerical solution using a faster implementation of each time step ----
 
@@ -66,6 +74,7 @@ int main (int nargs, char **args)
   omp_first_time_step (nx, ny, dx, dy, dt, u, u_prev);
 
   // compute the remaining time steps using a faster implementation
+  double start2 = omp_get_wtime();
   t = dt;
   while (t<T) {
     t += dt;
@@ -77,10 +86,13 @@ int main (int nargs, char **args)
     u = u_new;
     u_new = tmp_ptr;
   }
+  double stop2 = omp_get_wtime();
+  double time2 = (stop2 - start2);
   
-
-  printf("nx=%d, ny=%d, T=%g, dt=%g, error=%e\n",nx,ny,t,dt,
-	 omp_compute_numerical_error(nx,ny,dx,dy,t,u));
+  printf("Fast time step: \nnx=%d, ny=%d, T=%g, dt=%g, error=%e, calculation time=%lfms\n",
+   nx,ny,t,dt,
+	 omp_compute_numerical_error(nx,ny,dx,dy,t,u),
+   time2);
   
   
   deallocate_2D_array (u_new);
