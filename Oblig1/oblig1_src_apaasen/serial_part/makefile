@@ -9,7 +9,7 @@ compile:
 	first_time_step.c \
 	one_regular_time_step.c \
 	one_fast_time_step.c \
-	serial_main_copy.c 
+	serial_main.c 
 	
 
 run:

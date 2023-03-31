@@ -8,10 +8,14 @@ void omp_first_time_step (int nx, int ny, double dx, double dy, double dt,
   double fact_x = dt*dt / (16 * dx*dx);
   double fact_y = dt*dt / (16 * dy*dy);
 
+  int i,j; 
+
+  #pragma omp parallel 
+  {
   //Inner square:  
-  #pragma omp parallel for collapse(2)          
-  for (int i=1; i<ny-1; i++){    
-    for (int j=1; j<nx-1; j++){
+  #pragma omp for collapse(2)          
+  for (i=1; i<ny-1; i++){    
+    for (j=1; j<nx-1; j++){
       u[i][j] = u_prev[i][j]  
                 + fact_x * (u_prev[i][j-1] - 2*u_prev[i][j] + u_prev[i][j+1]) 
                 + fact_y * (u_prev[i-1][j] - 2*u_prev[i][j] + u_prev[i+1][j]); 
@@ -19,8 +23,8 @@ void omp_first_time_step (int nx, int ny, double dx, double dy, double dt,
   }
 
   //Boundries (colums without corners)
-  #pragma omp parallel for
-  for (int i=1; i<ny-1; i++){
+  #pragma omp for
+  for (i=1; i<ny-1; i++){
     u[i][0] = u_prev[i][0]  
                 + fact_x * (u_prev[i][1] - 2*u_prev[i][0] + u_prev[i][1]) 
                 + fact_y * (u_prev[i-1][0] - 2*u_prev[i][0] + u_prev[i+1][0]); //left column
@@ -30,8 +34,8 @@ void omp_first_time_step (int nx, int ny, double dx, double dy, double dt,
   }
 
   //Boundries (rows without corners)
-  #pragma omp parallel for
-  for (int j=1; j<nx-1; j++){
+  #pragma omp for
+  for (j=1; j<nx-1; j++){
     u[0][j] = u_prev[0][j]
               + fact_x * (u_prev[0][j-1] - 2*u_prev[0][j] + u_prev[0][j+1])
               + fact_y * (u_prev[1][j] - 2*u_prev[0][j] + u_prev[1][j]); //bottom row
@@ -39,6 +43,8 @@ void omp_first_time_step (int nx, int ny, double dx, double dy, double dt,
               + fact_x * (u_prev[ny-1][j-1] - 2*u_prev[ny-1][j] + u_prev[ny-1][j+1])
               + fact_y * (u_prev[ny-2][j] - 2*u_prev[0][j] + u_prev[ny-2][j]); //top row
   }
+
+  
 
   //Corners
   //NB, should this be parallelized? It is very short (only four elements)
@@ -59,7 +65,7 @@ void omp_first_time_step (int nx, int ny, double dx, double dy, double dt,
                 + fact_x * (u_prev[0][nx-2] - 2*u_prev[0][nx-1] + u_prev[0][nx-2]) 
                 + fact_y * (u_prev[1][nx-1] - 2*u_prev[0][nx-1] + u_prev[1][nx-1]); 
 
-
+  }
 }
 
 
