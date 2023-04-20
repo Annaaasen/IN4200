@@ -7,8 +7,9 @@ compile:
 	omp_compute_numerical_error.c \
 	omp_first_time_step.c \
 	omp_one_regular_time_step.c \
-	omp_one_fast_time_step.c \
-	para_main.c  
+	omp_one_fast_time_step_revised.c \
+	para_main.c \
+	-Wall 
 
 run:
 	./para_main.o 

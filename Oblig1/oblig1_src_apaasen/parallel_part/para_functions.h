@@ -13,5 +13,8 @@ void omp_one_fast_time_step (int nx, int ny, double dx, double dy, double dt,
 double omp_compute_numerical_error (int nx, int ny, double dx, double dy,
 				    double t_value, double **u);
 
+void omp_one_fast_time_step_revised (int nx, int ny, double dx, double dy, double dt,
+			     double **u_new, double **u, double **u_prev);
+
 
 #endif

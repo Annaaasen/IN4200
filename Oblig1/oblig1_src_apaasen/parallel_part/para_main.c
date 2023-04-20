@@ -77,7 +77,7 @@ int main (int nargs, char **args)
   while (t<T) {
     t += dt;
     // compute u_new using u and u_prev
-    omp_one_fast_time_step (nx, ny, dx, dy, dt, u_new, u, u_prev);
+    omp_one_fast_time_step_revised (nx, ny, dx, dy, dt, u_new, u, u_prev);
     /* pointer swaps */
     tmp_ptr = u_prev;
     u_prev = u;
