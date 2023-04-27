@@ -26,7 +26,7 @@ void communicate_above_below (int my_rank, int P, int nx, int my_ny, double **my
         MPI_Send(&(my_u[non_ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD);          //to above
         MPI_Recv(&(my_u[ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD, &status);   //from above
         // printf("%f\n", my_u[ghost_top][505]);
-        printf("0: %d\n", my_rank);
+        // printf("0: %d\n", my_rank);
     }
 
     else if(my_rank==P-1){
@@ -39,7 +39,7 @@ void communicate_above_below (int my_rank, int P, int nx, int my_ny, double **my
             MPI_Send(&(my_u[non_ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD);         //to below 
             MPI_Recv(&(my_u[ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD, &status);      //from below
         }
-        printf("last: %d\n", my_rank);
+        // printf("last: %d\n", my_rank);
     
     }
 
@@ -49,7 +49,7 @@ void communicate_above_below (int my_rank, int P, int nx, int my_ny, double **my
         MPI_Recv(&(my_u[ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD, &status); //from above 
         MPI_Send(&(my_u[non_ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD);    //to below
         MPI_Send(&(my_u[non_ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD);    //to above
-        printf("odd: %d\n", my_rank);
+        // printf("odd: %d\n", my_rank);
 
     }
 
@@ -58,7 +58,7 @@ void communicate_above_below (int my_rank, int P, int nx, int my_ny, double **my
         MPI_Send(&(my_u[non_ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD);    //to below
         MPI_Recv(&(my_u[ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD, &status); //from above 
         MPI_Recv(&(my_u[ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD, &status); //from below 
-        printf("even: %d\n", my_rank);
+        // printf("even: %d\n", my_rank);
     }
 
 

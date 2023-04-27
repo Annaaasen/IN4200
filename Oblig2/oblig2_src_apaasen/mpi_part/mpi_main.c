@@ -7,6 +7,8 @@
 #include "mpi_functions.h"
 
 #define Pi M_PI
+MPI_Request request;
+
 
 int main (int nargs, char **args)
 {
@@ -37,6 +39,7 @@ int main (int nargs, char **args)
     has_neigh_above = (my_rank<P-1) ? 1 : 0;
     my_offset = (my_rank*ny)/P;
     my_ny = ((my_rank+1)*ny)/P - my_offset;
+
     
     allocate_2D_array (&my_u, nx, (my_ny + has_neigh_below + has_neigh_above)); //account for the ghost points
     allocate_2D_array (&my_u_new, nx, (my_ny + has_neigh_below + has_neigh_above));
@@ -56,20 +59,21 @@ int main (int nargs, char **args)
     communicate_above_below (my_rank, P, nx, my_ny, my_u_prev);
     subg_first_time_step (my_rank, P, nx, my_ny, dx, dy, dt, my_u, my_u_prev);
 
-    // // compute the remaining time steps
-    // t = dt;
-    // while (t<T) {
-    //     t += dt;
-    //     communicate_above_below (my_rank, P, nx, my_ny, my_u);
-    //     subg_one_fast_time_step (my_rank, P, nx, my_ny, dx, dy, dt, my_u_new, my_u, my_u_prev);
-    //     /* pointer swaps */
-    //     my_tmp_ptr = my_u_prev;
-    //     my_u_new = my_u;
-    //     my_u = my_u_new;
-    //     my_u_new = my_tmp_ptr;
-    // }
-    // printf("my_rank=%d, nx=%d, my_ny=%d, T=%g, dt=%g, error=%e\n",my_rank,nx,my_ny,t,dt,
-    //         all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u));
+    // compute the remaining time steps
+    t = dt;
+    while (t<T) {
+        t += dt;
+        communicate_above_below (my_rank, P, nx, my_ny, my_u);
+        subg_one_fast_time_step (my_rank, P, nx, my_ny, dx, dy, dt, my_u_new, my_u, my_u_prev);
+        
+        /* pointer swaps */
+        my_tmp_ptr = my_u_prev;
+        my_u_prev = my_u;
+        my_u = my_u_new;
+        my_u_new = my_tmp_ptr;
+    }
+    printf("my_rank=%d, nx=%d, my_ny=%d, T=%g, dt=%g, error=%e\n",my_rank,nx,my_ny,t,dt,
+            all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u));
     
     // // stop timing
     // double end = MPI_Wtime();
@@ -78,9 +82,14 @@ int main (int nargs, char **args)
 
     // deallocate arrays my_u_new, my_u, my_u_prev (need to be done before Finalize as the 
     // arrays are allocated by indivdual processes)
+
+    MPI_Barrier(MPI_COMM_WORLD);
+
     deallocate_2D_array(my_u);
     deallocate_2D_array(my_u_new);
     deallocate_2D_array(my_u_prev);
+    
+
     
     MPI_Finalize ();
 
