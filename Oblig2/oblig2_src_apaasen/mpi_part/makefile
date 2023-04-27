@@ -9,7 +9,7 @@ compile:
 	-Wall
 
 run: 
-	mpirun -np 4 ./mpi_main.o
+	mpirun -np 3 ./mpi_main.o
 
 clean: 
 	rm *o

@@ -29,25 +29,7 @@ void communicate_above_below (int my_rank, int P, int nx, int my_ny, double **my
         printf("0: %d\n", my_rank);
     }
 
-    if(my_rank%2==1 && my_rank!=P-1){ //Odd numbers (it gives either 0 or 1 depending on whether there is a rest)
-        // printf("%f\n", my_u[non_ghost_bottom][505]);
-        MPI_Recv(&(my_u[ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD, &status); //from below 
-        MPI_Recv(&(my_u[ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD, &status); //from above 
-        MPI_Send(&(my_u[non_ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD);    //to below
-        MPI_Send(&(my_u[non_ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD);    //to above
-        printf("odd: %d\n", my_rank);
-
-    }
-
-    if(my_rank%2==0 && my_rank!=0 && my_rank!=P-1){ //Even numbers
-        MPI_Send(&(my_u[non_ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD);    //to above
-        MPI_Send(&(my_u[non_ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD);    //to below
-        MPI_Recv(&(my_u[ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD, &status); //from above 
-        MPI_Recv(&(my_u[ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD, &status); //from below 
-        printf("even: %d\n", my_rank);
-    }
-
-    if(my_rank==P-1){
+    else if(my_rank==P-1){
         //Whether this sends or receives first depends on the number of processes 
         if (my_rank%2==1){
             MPI_Recv(&(my_u[ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD, &status);      //from below
@@ -60,6 +42,25 @@ void communicate_above_below (int my_rank, int P, int nx, int my_ny, double **my
         printf("last: %d\n", my_rank);
     
     }
+
+    else if(my_rank%2==1){ //Odd numbers (it gives either 0 or 1 depending on whether there is a rest)
+        // printf("%f\n", my_u[non_ghost_bottom][505]);
+        MPI_Recv(&(my_u[ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD, &status); //from below 
+        MPI_Recv(&(my_u[ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD, &status); //from above 
+        MPI_Send(&(my_u[non_ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD);    //to below
+        MPI_Send(&(my_u[non_ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD);    //to above
+        printf("odd: %d\n", my_rank);
+
+    }
+
+    else if(my_rank%2==0){ //Even numbers
+        MPI_Send(&(my_u[non_ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD);    //to above
+        MPI_Send(&(my_u[non_ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD);    //to below
+        MPI_Recv(&(my_u[ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD, &status); //from above 
+        MPI_Recv(&(my_u[ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD, &status); //from below 
+        printf("even: %d\n", my_rank);
+    }
+
 
 
 }
