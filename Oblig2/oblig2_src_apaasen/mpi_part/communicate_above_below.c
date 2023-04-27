@@ -18,7 +18,7 @@ void communicate_above_below (int my_rank, int P, int nx, int my_ny, double **my
 
     //Should have blocking send/recv (could end up calculating with different time steps if everything is not sent)
 
-    //MPI_Send(&(my_u[out_idx_above][0], nx, MPI_Double, above, 0, MPI_COMM_WORLD))
+    //MPI_Send(&(my_u[out_idx_above][0], nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD))
 
     int above = my_rank + 1;
     int below = my_rank - 1;
@@ -29,40 +29,41 @@ void communicate_above_below (int my_rank, int P, int nx, int my_ny, double **my
     int non_ghost_bottom = 1;
 
     if(my_rank==0){
-        printf("%f\n", my_u[ghost_top][505]);
+        // printf("%f\n", my_u[ghost_top][505]);
         MPI_Send(&(my_u[non_ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD);          //to above
         MPI_Recv(&(my_u[ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD, &status);   //from above
-        printf("%f\n", my_u[ghost_top][505]);
+        // printf("%f\n", my_u[ghost_top][505]);
     }
 
     if(my_rank==1){ //Odd numbers (it gives either 0 or 1 depending on whether there is a rest)
-        printf("%f\n", my_u[non_ghost_bottom][505]);
+        // printf("%f\n", my_u[non_ghost_bottom][505]);
 
         MPI_Recv(&(my_u[ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD, &status); //from below 
-        // MPI_Recv(&(my_u[non_ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD, &status); //from above 
+        MPI_Recv(&(my_u[ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD, &status); //from above 
         MPI_Send(&(my_u[non_ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD);    //to below
-        // MPI_Send(&(my_u[ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD);    //to above
+        MPI_Send(&(my_u[non_ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD);    //to above
     }
 
     // if(my_rank%2==0){ //Even numbers
-    //     MPI_Send(&(my_u[ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD);    //to above
-    //     MPI_Send(&(my_u[ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD);    //to below
-    //     MPI_Recv(&(my_u[non_ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD, &status); //from above 
-    //     MPI_Recv(&(my_u[non_ghost_top][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD, &status); //from below 
+    //     MPI_Send(&(my_u[non_ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD);    //to above
+    //     MPI_Send(&(my_u[non_ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD);    //to below
+    //     MPI_Recv(&(my_u[ghost_top][0]), nx, MPI_DOUBLE, above, 0, MPI_COMM_WORLD, &status); //from above 
+    //     MPI_Recv(&(my_u[ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD, &status); //from below 
     // }
 
-    // if(my_rank==P-1){
-    //     //Whether this sends or receives first depends on the number of processes 
-    //     if (my_rank%2==1){
-    //         MPI_Recv(&(my_u[non_ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD, &status);      //from below
-    //         MPI_Send(&(my_u[ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD);         //to below
-    //     }
-    //     else{
-    //         MPI_Send(&(my_u[ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD);         //to below 
-    //         MPI_Recv(&(my_u[non_ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD, &status);      //from below
-    //     }
+    if(my_rank==P-1){
+        //Whether this sends or receives first depends on the number of processes 
+        if (my_rank%2==1){
+            MPI_Recv(&(my_u[ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD, &status);      //from below
+            MPI_Send(&(my_u[non_ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD);         //to below
+        }
+        else{
+            printf("%d %d", my_rank, my_rank%2);
+            MPI_Send(&(my_u[non_ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD);         //to below 
+            MPI_Recv(&(my_u[ghost_bottom][0]), nx, MPI_DOUBLE, below, 0, MPI_COMM_WORLD, &status);      //from below
+        }
     
-    // }
+    }
 
 
 }
