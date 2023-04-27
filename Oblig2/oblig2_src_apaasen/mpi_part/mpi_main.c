@@ -27,7 +27,7 @@ int main (int nargs, char **args)
         if (nargs>2) // if a new value of T is provided on the command line
             T = atof(args[2]);
     }
-
+    
     // let process 0 broadcast values of nx, ny and T to all other processes
     MPI_Bcast(&nx, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&ny, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -52,8 +52,8 @@ int main (int nargs, char **args)
     for (i=0; i<my_ny; i++)
         for (j=0; j<nx; j++)
             my_u_prev[i+has_neigh_below][j] = cos(2.0 * Pi * j * dx) * cos(2.0 * Pi * (i+my_offset) * dy);
-    
-    // communicate_above_below (my_rank, P, nx, my_ny, my_u_prev);
+
+    communicate_above_below (my_rank, P, nx, my_ny, my_u_prev);
     subg_first_time_step (my_rank, P, nx, my_ny, dx, dy, dt, my_u, my_u_prev);
 
     // // compute the remaining time steps
