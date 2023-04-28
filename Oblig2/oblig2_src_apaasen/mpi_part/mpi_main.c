@@ -62,10 +62,10 @@ int main (int nargs, char **args)
 
     // compute the remaining time steps
     t = dt;
-    while (t<2*dt) {
+    while (t<T) {
         t += dt;
-        printf("my_rank=%d, nx=%d, my_ny=%d, T=%g, dt=%g, error=%e\n",my_rank,nx,my_ny,t,dt,
-            all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u));
+        // printf("my_rank=%d, nx=%d, my_ny=%d, T=%g, dt=%g, error=%e\n",my_rank,nx,my_ny,t,dt,
+        //     all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u));
         all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u);
         communicate_above_below (my_rank, P, nx, my_ny, my_u);
         subg_one_fast_time_step (my_rank, P, nx, my_ny, dx, dy, dt, my_u_new, my_u, my_u_prev);
@@ -76,18 +76,19 @@ int main (int nargs, char **args)
         my_u = my_u_new;
         my_u_new = my_tmp_ptr;
     }
-    // printf("my_rank=%d, nx=%d, my_ny=%d, T=%g, dt=%g, error=%e\n",my_rank,nx,my_ny,t,dt,
-    //         all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u));
+    printf("my_rank=%d, nx=%d, my_ny=%d, T=%g, dt=%g, error=%e\n",my_rank,nx,my_ny,t,dt,
+            all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u));
     
-    // // stop timing
-    // double end = MPI_Wtime();
-    // printf("The process took %f seconds to run", end - start); 
-
+    // stop timing
+    MPI_Barrier(MPI_COMM_WORLD);
+    double end = MPI_Wtime();
 
     // deallocate arrays my_u_new, my_u, my_u_prev (need to be done before Finalize as the 
     // arrays are allocated by indivdual processes)
 
-    MPI_Barrier(MPI_COMM_WORLD);
+    if(my_rank==0){
+        printf("The process took %f seconds to run\n", end - start); 
+    }
 
     deallocate_2D_array(my_u);
     deallocate_2D_array(my_u_new);

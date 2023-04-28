@@ -16,8 +16,6 @@ double all_compute_numerical_error (int my_rank, int my_offset, int P, int nx, i
     double y, x, u_true, err; 
     int i, j;
 
-    // int i_stop = (my_rank==0) ? my_ny : my_ny+1; 
-
     double pi_t = cos(Pi * t_value);
     double sum = 0;
 
