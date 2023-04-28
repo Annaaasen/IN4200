@@ -66,7 +66,8 @@ int main (int nargs, char **args)
         t += dt;
         // printf("my_rank=%d, nx=%d, my_ny=%d, T=%g, dt=%g, error=%e\n",my_rank,nx,my_ny,t,dt,
         //     all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u));
-        all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u);
+        //     all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u);
+        
         communicate_above_below (my_rank, P, nx, my_ny, my_u);
         subg_one_fast_time_step (my_rank, P, nx, my_ny, dx, dy, dt, my_u_new, my_u, my_u_prev);
         
@@ -78,6 +79,7 @@ int main (int nargs, char **args)
     }
     printf("my_rank=%d, nx=%d, my_ny=%d, T=%g, dt=%g, error=%e\n",my_rank,nx,my_ny,t,dt,
             all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u));
+    // all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u);
     
     // stop timing
     MPI_Barrier(MPI_COMM_WORLD);

@@ -26,6 +26,11 @@ double all_compute_numerical_error (int my_rank, int my_offset, int P, int nx, i
             x = j*dx;
             u_true = cos(2*Pi*x) * cos(2*Pi*y) * pi_t; 
             sum += (u_true - my_u[i+has_neighbour_below][j])*(u_true - my_u[i+has_neighbour_below][j]); //However, this needs to avoid the ghost points at i==0
+            
+            // if(my_rank==P-1){
+            //     printf("u_true=%.3f, my_u=%.3f, j=%d, i=%d, x=%.3f, y=%.3f\n",u_true, my_u[my_ny][j], j, i, x, y);
+            // }
+        
         }
         // if(my_rank==1){
         //     printf("u_true = %f  my_u = %f, i=%d, j=%d, myo=%d, y=%f\n", u_true, my_u[i+has_neighbour_below][j], i, j, my_offset, y);

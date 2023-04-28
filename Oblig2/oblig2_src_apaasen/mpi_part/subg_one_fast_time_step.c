@@ -59,25 +59,37 @@ void subg_one_fast_time_step (int my_rank, int P, int nx, int my_ny, double dx, 
         // Top left corner:
         my_u_new[my_ny][nx-1] = 2*my_u[my_ny][nx-1]  
                         + fact_x * (my_u[my_ny][nx-2] - 2*my_u[my_ny][nx-1] + my_u[my_ny][nx-2]) 
-                        + fact_y * (my_u[my_ny-2][nx-1] - 2*my_u[my_ny][nx-1] + my_u[my_ny-2][nx-1])
+                        + fact_y * (my_u[my_ny-1][nx-1] - 2*my_u[my_ny][nx-1] + my_u[my_ny-1][nx-1])
                         - my_u_prev[my_ny][nx-1]; 
 
         //Top row (wo/corners): 
         for (int j=1; j<nx-1; j++){
             my_u_new[my_ny][j] = 2*my_u[my_ny][j]
                     + fact_x * (my_u[my_ny][j-1] - 2*my_u[my_ny][j] + my_u[my_ny][j+1])
-                    + fact_y * (my_u[my_ny-2][j] - 2*my_u[my_ny][j] + my_u[my_ny-2][j])
+                    + fact_y * (my_u[my_ny-1][j] - 2*my_u[my_ny][j] + my_u[my_ny-1][j])
                     - my_u_prev[my_ny][j]; 
         }
 
         //Top  right corner: 
         my_u_new[my_ny][0] = 2*my_u[my_ny][0]  
                 + fact_x * (my_u[my_ny][1] - 2*my_u[my_ny][0] + my_u[my_ny][1]) 
-                + fact_y * (my_u[my_ny-2][0] - 2*my_u[my_ny][0] + my_u[my_ny-2][0])
+                + fact_y * (my_u[my_ny-1][0] - 2*my_u[my_ny][0] + my_u[my_ny-1][0])
                 - my_u_prev[my_ny][0];
     
     
     }
+
+    // if (my_rank==P-1){
+
+    //     //top row
+    //     for (int j=1; j<nx-1; j++){
+    //         my_u_new[my_ny][j] = 2*my_u[my_ny][j]
+    //                     + fact_x * (my_u[my_ny][j-1] - 2*my_u[my_ny][j] + my_u[my_ny][j+1])
+    //                     + fact_y * (my_u[my_ny-1][j] - 2*my_u[my_ny][j] + my_u[my_ny-1][j])
+    //                     - u_prev[my_ny][j]; 
+    //     }
+
+    // }
 
 
 
