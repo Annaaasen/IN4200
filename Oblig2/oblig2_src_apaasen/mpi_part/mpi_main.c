@@ -62,7 +62,7 @@ int main (int nargs, char **args)
 
     // compute the remaining time steps
     t = dt;
-    while (t<T) {
+    while (t<1*dt) {
         t += dt;
         // printf("my_rank=%d, nx=%d, my_ny=%d, T=%g, dt=%g, error=%e\n",my_rank,nx,my_ny,t,dt,
         //     all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u));
