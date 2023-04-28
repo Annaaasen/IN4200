@@ -28,9 +28,9 @@ void subg_first_time_step (int my_rank, int P, int nx, int my_ny, double dx, dou
         
         //Inner square:            
         for (int j=1; j<nx-1; j++){
-        my_u[i][j] = my_u_prev[i][j]  
-                    + fact_x * (my_u_prev[i][j-1] - 2*my_u_prev[i][j] + my_u_prev[i][j+1]) 
-                    + fact_y * (my_u_prev[i-1][j] - 2*my_u_prev[i][j] + my_u_prev[i+1][j]); 
+            my_u[i][j] = my_u_prev[i][j]  
+                        + fact_x * (my_u_prev[i][j-1] - 2*my_u_prev[i][j] + my_u_prev[i][j+1]) 
+                        + fact_y * (my_u_prev[i-1][j] - 2*my_u_prev[i][j] + my_u_prev[i+1][j]); 
         }
 
         //Right column: 

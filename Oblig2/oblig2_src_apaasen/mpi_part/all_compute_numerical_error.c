@@ -11,27 +11,29 @@ double all_compute_numerical_error (int my_rank, int my_offset, int P, int nx, i
 
 // Remember to use the correct y-value (i=0 til my_ny), but NB remember ghost points! Use my_offset 
  
+    int has_neighbour_below = (my_rank>0) ? 1 : 0;
+
     double y, x, u_true, err; 
     int i, j;
 
-    int i_start = (my_rank==0) ? 0 : 1;
-    int i_stop = (my_rank==0) ? my_ny : my_ny+1; 
+    // int i_stop = (my_rank==0) ? my_ny : my_ny+1; 
 
     double pi_t = cos(Pi * t_value);
     double sum = 0;
 
-    for (i=i_start; i<i_stop; i++){
-        y = (i + my_offset)*dy;
+
+    for (i=0; i<my_ny; i++){
+        y = (i + my_offset)*dy; //This needs i to go from 0
         for (j=0; j<nx-1; j++){
             x = j*dx;
             u_true = cos(2*Pi*x) * cos(2*Pi*y) * pi_t; 
-            sum += (u_true - my_u[i][j])*(u_true - my_u[i][j]);
+            sum += (u_true - my_u[i+has_neighbour_below][j])*(u_true - my_u[i+has_neighbour_below][j]); //However, this needs to avoid the ghost points at i==0
         }
+        // if(my_rank==1){
+        //     printf("u_true = %f  my_u = %f, i=%d, j=%d, myo=%d, y=%f\n", u_true, my_u[i+has_neighbour_below][j], i, j, my_offset, y);
+        // }
     }
 
-    // if(my_rank==2){
-    //     printf("u_true = %f  my_u = %f\n", u_true, my_u[-1][-1]);
-    // }
 
     err = sqrt(dx * dy * sum);
 
