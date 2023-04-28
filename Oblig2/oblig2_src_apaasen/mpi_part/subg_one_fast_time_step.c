@@ -1,8 +1,8 @@
 void subg_one_fast_time_step (int my_rank, int P, int nx, int my_ny, double dx, double dy, double dt,
                             double **my_u_new, double **my_u, double **my_u_prev){
 
-    double fact_x = dt*dt / (16 * dx*dx);
-    double fact_y = dt*dt / (16 * dy*dy);
+    double fact_x = dt*dt / (8 * dx*dx);
+    double fact_y = dt*dt / (8 * dy*dy);
 
     int i, j;
     int i_stop = (my_rank==0) || (my_rank==P-1) ? my_ny : my_ny+1;
@@ -78,19 +78,6 @@ void subg_one_fast_time_step (int my_rank, int P, int nx, int my_ny, double dx, 
     
     
     }
-
-    // if (my_rank==P-1){
-
-    //     //top row
-    //     for (int j=1; j<nx-1; j++){
-    //         my_u_new[my_ny][j] = 2*my_u[my_ny][j]
-    //                     + fact_x * (my_u[my_ny][j-1] - 2*my_u[my_ny][j] + my_u[my_ny][j+1])
-    //                     + fact_y * (my_u[my_ny-1][j] - 2*my_u[my_ny][j] + my_u[my_ny-1][j])
-    //                     - u_prev[my_ny][j]; 
-    //     }
-
-    // }
-
 
 
 }
