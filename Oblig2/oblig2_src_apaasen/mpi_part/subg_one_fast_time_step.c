@@ -7,7 +7,6 @@ void subg_one_fast_time_step (int my_rank, int P, int nx, int my_ny, double dx, 
     int i, j;
     int i_stop = (my_rank==0) || (my_rank==P-1) ? my_ny : my_ny+1;
 
-
     for (i=1; i<i_stop; i++){
         //left column
         my_u_new[i][0] = 2*my_u[i][0]  
@@ -31,8 +30,8 @@ void subg_one_fast_time_step (int my_rank, int P, int nx, int my_ny, double dx, 
     }
 
    
+    //The lower row
     if(my_rank==0){
-        //the lower corners + lower row
         // Bottom left corner: 
         my_u_new[0][0] = 2*my_u[0][0]  
                         + fact_x * (my_u[0][1] - 2*my_u[0][0] + my_u[0][1]) 
@@ -55,6 +54,7 @@ void subg_one_fast_time_step (int my_rank, int P, int nx, int my_ny, double dx, 
 
     }
 
+    //The top row:
     if(my_rank==P-1){
         // Top left corner:
         my_u_new[my_ny][nx-1] = 2*my_u[my_ny][nx-1]  

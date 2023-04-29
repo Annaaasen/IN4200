@@ -1,19 +1,9 @@
-// Motive of this function:
-// Let's each process compute the first time step
-
 void subg_first_time_step (int my_rank, int P, int nx, int my_ny, double dx, double dy, double dt, 
                             double **my_u, double **my_u_prev)
 {
     // Want to calculate the first time step for every point 
-    // Is it enough to substitute ny, u, and u_prev to parallelize? What about ghost points? Should the my_ny-1 be replaced by my_ny?
-    // Don't think so, as the array has length which includes the ghost points
-
-
-    // Maybe rank should be used to distinguish the idx
-
     // NB! my_ny does not include the ghost points! Only the u-arrays do
 
-  
     double fact_x = dt*dt / (16 * dx*dx);
     double fact_y = dt*dt / (16 * dy*dy);
 
@@ -40,8 +30,8 @@ void subg_first_time_step (int my_rank, int P, int nx, int my_ny, double dx, dou
     }
 
    
+    //The lower row
     if(my_rank==0){
-        //the lower corners + lower row
         // Bottom left corner: 
         my_u[0][0] = my_u_prev[0][0]  
                         + fact_x * (my_u_prev[0][1] - 2*my_u_prev[0][0] + my_u_prev[0][1]) 
@@ -61,6 +51,7 @@ void subg_first_time_step (int my_rank, int P, int nx, int my_ny, double dx, dou
 
     }
 
+    //The top row: 
     if(my_rank==P-1){
         // Top left corner:
         my_u[my_ny][nx-1] = my_u_prev[my_ny][nx-1]  
@@ -77,9 +68,7 @@ void subg_first_time_step (int my_rank, int P, int nx, int my_ny, double dx, dou
         //Top  right corner: 
         my_u[my_ny][0] = my_u_prev[my_ny][0]  
                 + fact_x * (my_u_prev[my_ny][1] - 2*my_u_prev[my_ny][0] + my_u_prev[my_ny][1]) 
-                + fact_y * (my_u_prev[my_ny-1][0] - 2*my_u_prev[my_ny][0] + my_u_prev[my_ny-1][0]);
-    
-    
+                + fact_y * (my_u_prev[my_ny-1][0] - 2*my_u_prev[my_ny][0] + my_u_prev[my_ny-1][0]);    
     }
 
 

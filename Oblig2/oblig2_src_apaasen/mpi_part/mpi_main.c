@@ -40,7 +40,7 @@ int main (int nargs, char **args)
     my_offset = (my_rank*ny)/P;
     my_ny = ((my_rank+1)*ny)/P - my_offset;
 
-    
+    //Allocating the arrays:
     allocate_2D_array (&my_u, nx, (my_ny + has_neigh_below + has_neigh_above)); //account for the ghost points
     allocate_2D_array (&my_u_new, nx, (my_ny + has_neigh_below + has_neigh_above));
     allocate_2D_array (&my_u_prev, nx, (my_ny + has_neigh_below + has_neigh_above));
@@ -58,15 +58,11 @@ int main (int nargs, char **args)
 
     communicate_above_below (my_rank, P, nx, my_ny, my_u_prev);
     subg_first_time_step (my_rank, P, nx, my_ny, dx, dy, dt, my_u, my_u_prev);
-    
 
     // compute the remaining time steps
     t = dt;
     while (t<T) {
         t += dt;
-        // printf("my_rank=%d, nx=%d, my_ny=%d, T=%g, dt=%g, error=%e\n",my_rank,nx,my_ny,t,dt,
-        //     all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u));
-        //     all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u);
         
         communicate_above_below (my_rank, P, nx, my_ny, my_u);
         subg_one_fast_time_step (my_rank, P, nx, my_ny, dx, dy, dt, my_u_new, my_u, my_u_prev);
@@ -79,24 +75,23 @@ int main (int nargs, char **args)
     }
     printf("my_rank=%d, nx=%d, my_ny=%d, T=%g, dt=%g, error=%e\n",my_rank,nx,my_ny,t,dt,
             all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u));
-    // all_compute_numerical_error(my_rank,my_offset,P,nx,my_ny,dx,dy,t,my_u);
     
-    // stop timing
+    
+    // Gathering all the processes 
     MPI_Barrier(MPI_COMM_WORLD);
-    double end = MPI_Wtime();
 
-    // deallocate arrays my_u_new, my_u, my_u_prev (need to be done before Finalize as the 
-    // arrays are allocated by indivdual processes)
+    // stop timing
+    double end = MPI_Wtime();
 
     if(my_rank==0){
         printf("The process took %f seconds to run\n", end - start); 
     }
 
+    // deallocate arrays my_u_new, my_u, my_u_prev (need to be done before Finalize as the 
+    // arrays are allocated by indivdual processes)
     deallocate_2D_array(my_u);
     deallocate_2D_array(my_u_new);
     deallocate_2D_array(my_u_prev);
-    
-
     
     MPI_Finalize ();
 
